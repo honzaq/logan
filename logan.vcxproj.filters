@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="File">
+      <UniqueIdentifier>{0c262053-941f-4980-90af-b6f9abf63866}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Search">
+      <UniqueIdentifier>{28bde528-ff73-40f2-b861-d44353bdf49d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{a9fdd509-67ff-4671-be8a-4e983119dcfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LogLine">
+      <UniqueIdentifier>{b4d50ddd-1404-4fd5-9380-194860a9fe1e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="file_holder.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="search.h">
+      <Filter>Search</Filter>
+    </ClInclude>
+    <ClInclude Include="log_line.h">
+      <Filter>LogLine</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="file_holder.cpp">
+      <Filter>File</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="logan.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="search.cpp">
+      <Filter>Search</Filter>
+    </ClCompile>
+    <ClCompile Include="log_line.cpp">
+      <Filter>LogLine</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
