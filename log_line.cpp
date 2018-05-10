@@ -7,11 +7,10 @@ log_line::log_line(const uint8_t* data, size_t data_length, size_t pos)
 	: m_data(data)
 	, m_data_length(data_length)
 {
-	get_full_line(pos);
-	parse();
+	full_line_from_pos(pos);
 }
 
-void log_line::get_full_line(size_t pos)
+void log_line::full_line_from_pos(size_t pos)
 {
 	if(pos > m_data_length) {
 		throw std::exception("Position is after data length");
@@ -64,17 +63,35 @@ void log_line::get_full_line(size_t pos)
 
 std::string log_line::get_line()
 {
-	return std::string(reinterpret_cast<const char*>(m_data + m_line_pos.begin), m_line_pos.end - m_line_pos.begin);
+	return std::string(reinterpret_cast<const char*>(m_data + m_line_pos.begin), m_line_pos.len());
 }
 
 // digits only
-size_t to_int(const char* str, size_t len) {
-
-	int n = 0;
+size_t to_int(const unsigned char* str, size_t len)
+{
+	size_t n = 0;
 	while(len--) {
+		if(*str == ' ') {
+			++str;
+			continue;
+		}
 		n = n * 10 + *str++ - '0';
 	}
 	return n;
+}
+
+void log_line::trim_begin_space(text_pos& val_pos)
+{
+	while(val_pos.begin <= val_pos.end && m_data[val_pos.begin] == ' ') {
+		++val_pos.begin;
+	}
+}
+
+void log_line::trim_end_space(text_pos& val_pos)
+{
+	while(val_pos.end > val_pos.begin && m_data[--val_pos.end] == ' ') {};
+
+	++val_pos.end;
 }
 
 void log_line::parse()
@@ -87,35 +104,112 @@ void log_line::parse()
 	//                                                            [PID:THID max 5chars each]
 	//                                                                          Log text
 
+	if(m_line_pos.len() < 64) {
+		throw std::exception("unsupported log format");
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 	// Date
 	text_pos time_pos;
-	if(m_line_pos.end > m_line_pos.begin + 24 && m_data[m_line_pos.begin] == '[' && m_data[m_line_pos.begin + 24] == ']') {
-		time_pos.begin = m_line_pos.begin + 1;
-		time_pos.end = time_pos.begin + 23;
-	}
-	else {
-		throw std::exception("unsupported log format, date");
-	}
+	time_pos.begin = m_line_pos.begin + 1;
+	time_pos.end = time_pos.begin + 23;
 	
 	//std::string time(reinterpret_cast<const char*>(m_data + time_pos.begin), time_pos.end - time_pos.begin);
 	{
 		// to SystemTime
 		SYSTEMTIME sys_time = { 0 };
 		// 2018-05-02 10:06:47.900
-		sys_time.wYear = static_cast<WORD>(to_int(reinterpret_cast<const char*>(m_data + time_pos.begin), 4));
-		sys_time.wMonth = static_cast<WORD>(to_int(reinterpret_cast<const char*>(m_data + time_pos.begin + 5), 2));
-		sys_time.wDay = static_cast<WORD>(to_int(reinterpret_cast<const char*>(m_data + time_pos.begin + 8), 2));
+		sys_time.wYear = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin), 4));
+		sys_time.wMonth = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin + 5), 2));
+		sys_time.wDay = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin + 8), 2));
 
-		sys_time.wHour = static_cast<WORD>(to_int(reinterpret_cast<const char*>(m_data + time_pos.begin + 11), 2));
-		sys_time.wMinute = static_cast<WORD>(to_int(reinterpret_cast<const char*>(m_data + time_pos.begin + 14), 2));
-		sys_time.wSecond = static_cast<WORD>(to_int(reinterpret_cast<const char*>(m_data + time_pos.begin + 17), 2));
-		sys_time.wMilliseconds = static_cast<WORD>(to_int(reinterpret_cast<const char*>(m_data + time_pos.begin + 20), 3));
+		sys_time.wHour = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin + 11), 2));
+		sys_time.wMinute = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin + 14), 2));
+		sys_time.wSecond = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin + 17), 2));
+		sys_time.wMilliseconds = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin + 20), 3));
 	}
 	
+	//////////////////////////////////////////////////////////////////////////
+	// Severity
+	text_pos severity_pos;
+	severity_pos.begin = m_line_pos.begin + 27;
+	severity_pos.end = severity_pos.begin + 7;
+	trim_end_space(severity_pos);
+	//std::string severity(reinterpret_cast<const char*>(m_data + severity_pos.begin), severity_pos.len());
+
+	//////////////////////////////////////////////////////////////////////////
+	// Logger
+	text_pos logger_pos;
+	logger_pos.begin = m_line_pos.begin + 37;
+	logger_pos.end = logger_pos.begin + 11;
+	trim_end_space(logger_pos);
+	std::string logger(reinterpret_cast<const char*>(m_data + logger_pos.begin), logger_pos.len());
+
+	//////////////////////////////////////////////////////////////////////////
+	// PID
+	text_pos pid_pos;
+	pid_pos.begin = m_line_pos.begin + 51;
+	pid_pos.end = pid_pos.begin + 5;
+	trim_begin_space(pid_pos);
+	std::string spid(reinterpret_cast<const char*>(m_data + pid_pos.begin), pid_pos.len());
+
+	{
+		uint32_t pid = static_cast<uint32_t>(to_int(reinterpret_cast<const unsigned char*>(m_data + pid_pos.begin), pid_pos.len()));
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// THID
+	text_pos thid_pos;
+	thid_pos.begin = m_line_pos.begin + 57;
+	thid_pos.end = thid_pos.begin + 5;
+	trim_begin_space(thid_pos);
+	std::string sthid(reinterpret_cast<const char*>(m_data + thid_pos.begin), thid_pos.len());
+
+	{
+		uint32_t thid = static_cast<uint32_t>(to_int(reinterpret_cast<const unsigned char*>(m_data + thid_pos.begin), thid_pos.len()));
+	}
+
+	text_pos msg_pos;
+	msg_pos.begin = m_line_pos.begin + 64;
+	msg_pos.end = m_line_pos.end;
 	
-	
-	
+	std::string msg(reinterpret_cast<const char*>(m_data + msg_pos.begin ), msg_pos.len());
+}
+
+FILETIME log_line::get_time()
+{
+	if(m_line_pos.len() < 64) {
+		throw std::exception("unsupported log format");
+	}
+
+	text_pos time_pos;
+	time_pos.begin = m_line_pos.begin + 1;
+	time_pos.end = time_pos.begin + 23;
+
+	// to SystemTime
+	SYSTEMTIME sys_time = { 0 };
+	sys_time.wYear = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin), 4));
+	sys_time.wMonth = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin + 5), 2));
+	sys_time.wDay = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin + 8), 2));
+
+	sys_time.wHour = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin + 11), 2));
+	sys_time.wMinute = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin + 14), 2));
+	sys_time.wSecond = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin + 17), 2));
+	sys_time.wMilliseconds = static_cast<WORD>(to_int(reinterpret_cast<const unsigned char*>(m_data + time_pos.begin + 20), 3));
+
+	FILETIME ft;
+	::SystemTimeToFileTime(&sys_time, &ft);
+
+	return ft;
+}
+
+std::string log_line::get_msg()
+{
+	text_pos msg_pos;
+	msg_pos.begin = m_line_pos.begin + 64;
+	msg_pos.end = m_line_pos.end;
+
+	return std::string(reinterpret_cast<const char*>(m_data + msg_pos.begin), msg_pos.len());
 }
 
 } // end of namespace logan

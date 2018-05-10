@@ -1,3 +1,5 @@
+*.int.log
+
 # Prerequisites
 *.d
 

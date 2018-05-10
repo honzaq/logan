@@ -85,12 +85,12 @@ size_t file_holder::get_bom_length() const
 
 const uint8_t* file_holder::data() const
 {
-	return m_lpBaseAddress;
+	return m_lpBaseAddress + get_bom_length();
 }
 
 const size_t file_holder::data_length() const
 {
-	return m_fileSize;
+	return m_fileSize - get_bom_length();
 }
 
 } // end of namespace logan

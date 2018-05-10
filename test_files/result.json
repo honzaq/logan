@@ -1,0 +1,89 @@
+{
+    "reports": [
+        {
+            "count": 1,
+            "last_time": 131703436183670000,
+            "text": "AavmProviderStop [Inner] Prov: BrowserProtection\r\n                                                                Exception: provider is not running\r\n                                                                Code: 0x80046102 (-2147196670)"
+        },
+        {
+            "count": 5,
+            "last_time": 131703434456130000,
+            "text": "AavmProviderStop [Inner] Prov: null\r\n                                                                Exception: Provider not found\r\n                                                                Code: 0x80046100 (-2147196672)"
+        },
+        {
+            "count": 1,
+            "last_time": 131703255294720000,
+            "text": "AavmProviderUpdateConfiguration Prov: FileSystemShield\r\n                                                                Exception: provider is not running\r\n                                                                Code: 0x80046102 (-2147196670)"
+        },
+        {
+            "count": 4,
+            "last_time": 131703434456290000,
+            "text": "Cannot found zen module registry - zen is propably not installed"
+        },
+        {
+            "count": 4,
+            "last_time": 131703434456340000,
+            "text": "Fail to parse default NL cfg '* Line 1, Column 1\r\n                                                                  Syntax error: value, object or array expected.\r\n                                                                '"
+        },
+        {
+            "count": 4,
+            "last_time": 131703434451540000,
+            "text": "Failed to Load fmw base (0xe0010013)"
+        },
+        {
+            "count": 3,
+            "last_time": 131703255948470000,
+            "text": "Failed to retrieve account email (0xe001f910)"
+        },
+        {
+            "count": 4,
+            "last_time": 131703434451540000,
+            "text": "Get fmw dll path fail 2"
+        },
+        {
+            "count": 4,
+            "last_time": 131703434456340000,
+            "text": "Initialize Notify limiter failed\r\n                                                                Exception: * Line 1, Column 1\r\n                                                                  Syntax error: value, object or array expected.\r\n                                                                "
+        },
+        {
+            "count": 6,
+            "last_time": 131703434452380000,
+            "text": "OnPushNotification failed. Native Messaging host process ID is 0.\r\n                                                                Exception: Native Messaging host process ID is 0."
+        },
+        {
+            "count": 40,
+            "last_time": 131704234563020000,
+            "text": "Sending event to AvgUI-CA9FD535-7634-4027-92BB-27FA119FC847:1 failed.\r\n                                                                Exception: Broadcasting of process_monitor.process_ended.server event by RPC failed.\r\n                                                                Code: 0x80070057 (-2147024809)"
+        },
+        {
+            "count": 1,
+            "last_time": 131704234682660000,
+            "text": "Sending event to AvgUI-CA9FD535-7634-4027-92BB-27FA119FC847:1 failed.\r\n                                                                Exception: Broadcasting of process_monitor.process_ended.server event by RPC failed.\r\n                                                                Code: 0x80070057 (-2147024809)\r\n"
+        },
+        {
+            "count": 55,
+            "last_time": 131704234531260000,
+            "text": "Sending event to AvgUI-CA9FD535-7634-4027-92BB-27FA119FC847:1 failed.\r\n                                                                Exception: Broadcasting of process_monitor.process_started.server event by RPC failed.\r\n                                                                Code: 0x80070057 (-2147024809)"
+        },
+        {
+            "count": 18,
+            "last_time": 131703434670900000,
+            "text": "app.alpha.GetAvailableTrials failed: Request 'app.alpha.GetAvailableTrials' was not processed. Routing parameters: "
+        },
+        {
+            "count": 1,
+            "last_time": 131703255628180000,
+            "text": "asw::event_routing::rpc::CallEventRoutingSafe: RPC call failed with code 1726"
+        },
+        {
+            "count": 2,
+            "last_time": 131703254859490000,
+            "text": "failed to load key 0 (error 2)"
+        },
+        {
+            "count": 1,
+            "last_time": 131703279029790000,
+            "text": "updating cache finished with error (might be OK if URL is empty) (0x4c7)"
+        }
+    ]
+}

@@ -13,6 +13,15 @@
     <Filter Include="LogLine">
       <UniqueIdentifier>{b4d50ddd-1404-4fd5-9380-194860a9fe1e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Logger">
+      <UniqueIdentifier>{8eab1f23-f758-4d92-9390-a42fa6fb13fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mesure">
+      <UniqueIdentifier>{0ab039e9-61eb-4adf-8caf-14ae93536286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Analyzer">
+      <UniqueIdentifier>{3f4533a1-0ef0-4d21-b7e2-55f78e9dde43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="file_holder.h">
@@ -25,6 +34,15 @@
     </ClInclude>
     <ClInclude Include="log_line.h">
       <Filter>LogLine</Filter>
+    </ClInclude>
+    <ClInclude Include="logger_holder.h">
+      <Filter>Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="time_measure.h">
+      <Filter>Mesure</Filter>
+    </ClInclude>
+    <ClInclude Include="analyzer.h">
+      <Filter>Analyzer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +58,9 @@
     </ClCompile>
     <ClCompile Include="log_line.cpp">
       <Filter>LogLine</Filter>
+    </ClCompile>
+    <ClCompile Include="analyzer.cpp">
+      <Filter>Analyzer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

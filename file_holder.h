@@ -21,7 +21,9 @@ public:
 	encoding get_bom() const;
 	size_t get_bom_length() const;
 
+	/* BOM already removed */
 	const uint8_t* data() const;
+	/* BOM already removed */
 	const size_t data_length() const;
 
 protected:

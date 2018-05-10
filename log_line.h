@@ -2,6 +2,15 @@
 
 namespace logan {
 
+struct text_pos {
+	size_t begin = 0;
+	size_t end = 0;
+
+	inline size_t len() const {
+		return end - begin;
+	}
+};
+
 class log_line
 {
 public:
@@ -9,15 +18,21 @@ public:
 
 	std::string get_line();
 
-protected:
-	void get_full_line(size_t pos);
-	void parse();
+	FILETIME get_time();
+	std::string get_msg();
 
 protected:
-	struct text_pos {
-		size_t begin = 0;
-		size_t end = 0;
-	};
+	/* from position found entire log line */
+	void full_line_from_pos(size_t pos);
+	void parse();
+
+	/* skip all spaces at the string begin (move begin pointer)*/
+	void trim_begin_space(text_pos& val_pos);
+	/* skip all spaces at the string end (move end pointer)*/
+	void trim_end_space(text_pos& val_pos);
+
+protected:
+	
 
 	const uint8_t* m_data;
 	size_t         m_data_length;
