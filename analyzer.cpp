@@ -108,4 +108,36 @@ void analyzer::serialize_to_json(const wchar_t* file_name)
 	o << std::setw(4) << report << std::endl;
 }
 
+void analyzer::parse_from_json(const wchar_t* file_name)
+{
+	// clear previous data
+	m_analyzed_data.items.clear();
+
+	// parse json
+	std::ifstream ifs(file_name);
+	json report = json::parse(ifs);
+	if(report.is_object() && report.find("reports") != report.end()) {
+		auto reports = report["reports"];
+		for(auto it = reports.cbegin(); it != reports.cend(); ++it) {
+
+			data_item item;
+			item.count = it.value()["count"].get<uint32_t>();
+			item.skipped = 0;
+
+			ULONGLONG ftLong = it.value()["last_time"].get<ULONGLONG>();
+			item.last_time.dwLowDateTime  = (DWORD)(ftLong & 0xFFFFFFFF);
+			item.last_time.dwHighDateTime = (DWORD)(ftLong >> 32);
+
+			m_analyzed_data.items.emplace(it.value()["text"].get<std::string>(), item);
+		}
+	}
+}
+
+void analyzer::reset_after_send()
+{
+	for(auto& item : m_analyzed_data.items) {
+		item.second.count = 0;
+	}
+}
+
 } // end of namespace logan

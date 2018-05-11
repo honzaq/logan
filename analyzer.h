@@ -22,7 +22,11 @@ public:
 
 	void analyze_file(const wchar_t* file_name);
 	void dbg_print_result(bool lines = true);
+	
 	void serialize_to_json(const wchar_t* file_name);
+	void parse_from_json(const wchar_t* file_name);
+
+	void reset_after_send();
 
 protected:
 	analyze_data m_analyzed_data;
