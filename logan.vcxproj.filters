@@ -22,6 +22,9 @@
     <Filter Include="Analyzer">
       <UniqueIdentifier>{3f4533a1-0ef0-4d21-b7e2-55f78e9dde43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ConfigLoader">
+      <UniqueIdentifier>{6923e023-b8e2-40ec-9e25-72c1ab2cf925}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="file_holder.h">
@@ -44,6 +47,12 @@
     <ClInclude Include="analyzer.h">
       <Filter>Analyzer</Filter>
     </ClInclude>
+    <ClInclude Include="config_loader.h">
+      <Filter>ConfigLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="analyzer_intf.h">
+      <Filter>Analyzer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="file_holder.cpp">
@@ -61,6 +70,12 @@
     </ClCompile>
     <ClCompile Include="analyzer.cpp">
       <Filter>Analyzer</Filter>
+    </ClCompile>
+    <ClCompile Include="logger_holder.cpp">
+      <Filter>Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="config_loader.cpp">
+      <Filter>ConfigLoader</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -5,11 +5,6 @@
 #include "search.h"
 #include "log_line.h"
 
-#include "nlohmann/json.hpp"
-#include <fstream>
-
-using json = nlohmann::json;
-
 namespace logan {
 
 analyzer::analyzer(logger_ptr logger)
@@ -133,7 +128,7 @@ void analyzer::parse_from_json(const wchar_t* file_name)
 	}
 }
 
-void analyzer::reset_after_send()
+void analyzer::reset_counters()
 {
 	for(auto& item : m_analyzed_data.items) {
 		item.second.count = 0;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "analyzer_intf.h"
+
 namespace logan {
 
 struct data_item {
@@ -15,18 +17,20 @@ struct analyze_data {
 //////////////////////////////////////////////////////////////////////////
 // Analyzer class
 //////////////////////////////////////////////////////////////////////////
-class analyzer : protected logger_holder
+class analyzer 
+	: public analyzer_intf
+	, protected logger_holder
 {
 public:
 	analyzer(logger_ptr logger);
 
-	void analyze_file(const wchar_t* file_name);
-	void dbg_print_result(bool lines = true);
+	void analyze_file(const wchar_t* file_name) override;
+	void dbg_print_result(bool lines = true) override;
 	
-	void serialize_to_json(const wchar_t* file_name);
-	void parse_from_json(const wchar_t* file_name);
+	void serialize_to_json(const wchar_t* file_name) override;
+	void parse_from_json(const wchar_t* file_name) override;
 
-	void reset_after_send();
+	void reset_counters() override;
 
 protected:
 	analyze_data m_analyzed_data;
