@@ -1,6 +1,8 @@
 #pragma once
 
 #include "analyzer_intf.h"
+#include "share_data.h"
+#include "share_data_holder.h"
 
 namespace logan {
 
@@ -19,10 +21,11 @@ struct analyze_data {
 //////////////////////////////////////////////////////////////////////////
 class analyzer 
 	: public analyzer_intf
+	, protected share_data_holder
 	, protected logger_holder
 {
 public:
-	analyzer(logger_ptr logger);
+	analyzer(share_data& data, logger_ptr logger);
 
 	void analyze_file(const wchar_t* file_name) override;
 	void dbg_print_result(bool lines = true) override;

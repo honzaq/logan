@@ -25,6 +25,18 @@
     <Filter Include="ConfigLoader">
       <UniqueIdentifier>{6923e023-b8e2-40ec-9e25-72c1ab2cf925}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Parsers">
+      <UniqueIdentifier>{95188501-631e-4a73-ac4f-35fcb08e20f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parsers\Asw">
+      <UniqueIdentifier>{cc854857-d558-4092-b727-894d0a5e98ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Convert">
+      <UniqueIdentifier>{4ccdaaee-c06a-4f94-b601-f5ca0b2c9fcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShareData">
+      <UniqueIdentifier>{285a94be-5a21-495d-8861-ec58578447e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="file_holder.h">
@@ -35,23 +47,35 @@
     <ClInclude Include="search.h">
       <Filter>Search</Filter>
     </ClInclude>
-    <ClInclude Include="log_line.h">
-      <Filter>LogLine</Filter>
-    </ClInclude>
     <ClInclude Include="logger_holder.h">
       <Filter>Logger</Filter>
     </ClInclude>
     <ClInclude Include="time_measure.h">
       <Filter>Mesure</Filter>
     </ClInclude>
-    <ClInclude Include="analyzer.h">
-      <Filter>Analyzer</Filter>
-    </ClInclude>
     <ClInclude Include="config_loader.h">
       <Filter>ConfigLoader</Filter>
     </ClInclude>
+    <ClInclude Include="analyzer.h">
+      <Filter>Parsers\Asw</Filter>
+    </ClInclude>
     <ClInclude Include="analyzer_intf.h">
-      <Filter>Analyzer</Filter>
+      <Filter>Parsers\Asw</Filter>
+    </ClInclude>
+    <ClInclude Include="log_line.h">
+      <Filter>Parsers\Asw</Filter>
+    </ClInclude>
+    <ClInclude Include="parsers.h">
+      <Filter>Parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Convert</Filter>
+    </ClInclude>
+    <ClInclude Include="share_data.h">
+      <Filter>ShareData</Filter>
+    </ClInclude>
+    <ClInclude Include="share_data_holder.h">
+      <Filter>ShareData</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -65,17 +89,17 @@
     <ClCompile Include="search.cpp">
       <Filter>Search</Filter>
     </ClCompile>
-    <ClCompile Include="log_line.cpp">
-      <Filter>LogLine</Filter>
-    </ClCompile>
-    <ClCompile Include="analyzer.cpp">
-      <Filter>Analyzer</Filter>
-    </ClCompile>
     <ClCompile Include="logger_holder.cpp">
       <Filter>Logger</Filter>
     </ClCompile>
     <ClCompile Include="config_loader.cpp">
       <Filter>ConfigLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="analyzer.cpp">
+      <Filter>Parsers\Asw</Filter>
+    </ClCompile>
+    <ClCompile Include="log_line.cpp">
+      <Filter>Parsers\Asw</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

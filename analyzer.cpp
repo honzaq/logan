@@ -7,8 +7,9 @@
 
 namespace logan {
 
-analyzer::analyzer(logger_ptr logger)
-	: logger_holder(logger)
+analyzer::analyzer(share_data& data, logger_ptr logger)
+	: share_data_holder(data)
+	, logger_holder(logger)
 {
 }
 
@@ -26,6 +27,8 @@ void analyzer::analyze_file(const wchar_t* file_name)
 		logger()->error("Currently support only UTF-8.");
 		return;
 	}
+
+	bool only_new_time = data().cfg->only_new_time(parsers::asw);
 
 	//////////////////////////////////////////////////////////////////////////
 	// build table for fast search
@@ -48,12 +51,20 @@ void analyzer::analyze_file(const wchar_t* file_name)
 
 		auto it = m_analyzed_data.items.find(msg);
 		if(it != m_analyzed_data.items.end()) {
-			if(::CompareFileTime(&it->second.last_time, &time) < 0) {
-				it->second.count++;
-				it->second.last_time = time;
+			if(only_new_time) {
+				if(::CompareFileTime(&it->second.last_time, &time) < 0) {
+					it->second.count++;
+					it->second.last_time = time;
+				}
+				else {
+					it->second.skipped++;
+				}
 			}
 			else {
-				it->second.skipped++;
+				it->second.count++;
+				if(::CompareFileTime(&it->second.last_time, &time) < 0) {
+					it->second.last_time = time;
+				}
 			}
 		}
 		else {
@@ -110,20 +121,22 @@ void analyzer::parse_from_json(const wchar_t* file_name)
 
 	// parse json
 	std::ifstream ifs(file_name);
-	json report = json::parse(ifs);
-	if(report.is_object() && report.find("reports") != report.end()) {
-		auto reports = report["reports"];
-		for(auto it = reports.cbegin(); it != reports.cend(); ++it) {
+	if(ifs) {
+		json report = json::parse(ifs);
+		if(report.is_object() && report.find("reports") != report.end()) {
+			auto reports = report["reports"];
+			for(auto it = reports.cbegin(); it != reports.cend(); ++it) {
 
-			data_item item;
-			item.count = it.value()["count"].get<uint32_t>();
-			item.skipped = 0;
+				data_item item;
+				item.count = it.value()["count"].get<uint32_t>();
+				item.skipped = 0;
 
-			ULONGLONG ftLong = it.value()["last_time"].get<ULONGLONG>();
-			item.last_time.dwLowDateTime  = (DWORD)(ftLong & 0xFFFFFFFF);
-			item.last_time.dwHighDateTime = (DWORD)(ftLong >> 32);
+				ULONGLONG ftLong = it.value()["last_time"].get<ULONGLONG>();
+				item.last_time.dwLowDateTime = (DWORD)(ftLong & 0xFFFFFFFF);
+				item.last_time.dwHighDateTime = (DWORD)(ftLong >> 32);
 
-			m_analyzed_data.items.emplace(it.value()["text"].get<std::string>(), item);
+				m_analyzed_data.items.emplace(it.value()["text"].get<std::string>(), item);
+			}
 		}
 	}
 }

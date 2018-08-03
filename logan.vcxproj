@@ -151,8 +151,12 @@
     <ClInclude Include="analyzer_intf.h" />
     <ClInclude Include="config_loader.h" />
     <ClInclude Include="file_holder.h" />
+    <ClInclude Include="share_data.h" />
+    <ClInclude Include="share_data_holder.h" />
+    <ClInclude Include="utils.h" />
     <ClInclude Include="logger_holder.h" />
     <ClInclude Include="log_line.h" />
+    <ClInclude Include="parsers.h" />
     <ClInclude Include="search.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
