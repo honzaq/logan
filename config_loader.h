@@ -1,24 +1,25 @@
 #pragma once
 
 #include "parsers.h"
+#include "rapidjson/document.h"
 
 namespace logan {
 
-class config_loader
+class config_loader : logger_holder
 {
 public:
+	config_loader(logger_ptr logger);
+
 	bool load(const wchar_t* file_path);
 
 	parsers get_parser(const wchar_t* file_name);
-
-	bool only_new_time(parsers parser);
+	bool trim_msg_whitespaces(parsers parser);
 
 private:
-	parsers parsers_from_name(const std::string& name);
-	std::string parsers_to_name(parsers parser);
+	parsers parsers_from_name(const char* str);
 
 protected:
-	json m_cfg;
+	rapidjson::Document m_cfg;
 };
 
 } // end of namespace logan

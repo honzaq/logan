@@ -14,7 +14,7 @@ public:
 	{}
 
 	/*! Return current shared data */
-	share_data& data() {
+	share_data& sh_data() {
 		return m_data;
 	}
 

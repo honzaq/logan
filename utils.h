@@ -11,6 +11,12 @@ static inline std::string to_utf8(const wchar_t* str)
 	return converter.to_bytes(str);
 }
 
+static inline std::wstring to_utf16(const char* str)
+{
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> converter;
+	return converter.from_bytes(str);
+}
+
 static inline bool wildchar_compare(const char* wildstring, const char* matchstring)
 {
 	// https://www.codeproject.com/Articles/1088/Wildcard-string-compare-globbing

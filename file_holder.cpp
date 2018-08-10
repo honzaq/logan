@@ -4,12 +4,9 @@
 
 namespace logan {
 
-constexpr unsigned char UTF16_BOM_LE[] = { unsigned char(0xFF), unsigned char(0xFE) };
-constexpr unsigned char UTF16_BOM_BE[] = { unsigned char(0xFE), unsigned char(0xFF) };
-constexpr unsigned char UTF8_BOM[] = { unsigned char(0xEF), unsigned char(0xBB), unsigned char(0xBF) };
-
 file_holder::file_holder()
 {}
+
 file_holder::~file_holder()
 {
 	close();
@@ -17,6 +14,12 @@ file_holder::~file_holder()
 
 void file_holder::open(const WCHAR* file_name)
 {
+	// Close previous file
+	if(m_hFile) {
+		close();
+	}
+
+	// Open new file
 	m_hFile = ::CreateFile(file_name, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if(m_hFile == INVALID_HANDLE_VALUE) {
 		throw std::exception("Could not open file");
@@ -36,61 +39,42 @@ void file_holder::open(const WCHAR* file_name)
 		throw std::exception("Map view of file fail");
 	}
 
-	m_encoding = get_bom();
+	// Detect file BOM
+	const uint8_t* data = reinterpret_cast<uint8_t*>(m_lpBaseAddress);
+	m_encoding = detect_bom(data, m_fileSize);
 }
 
 void file_holder::close()
 {
 	if(m_lpBaseAddress != nullptr) {
 		::UnmapViewOfFile(m_lpBaseAddress);
+		m_lpBaseAddress = nullptr;
 	}
 	if(m_hFileMapping != nullptr) {
 		::CloseHandle(m_hFileMapping);
+		m_hFileMapping = nullptr;
 	}
 	if(m_hFile != INVALID_HANDLE_VALUE) {
 		::CloseHandle(m_hFile);
+		m_hFile = nullptr;
 	}
+	m_fileSize = 0;
+	m_encoding = encoding::none;
 }
 
-file_holder::encoding file_holder::get_bom() const
+encoding file_holder::get_bom() const
 {
-	const uint8_t* data = reinterpret_cast<uint8_t*>(m_lpBaseAddress);
-	if(m_fileSize >= 2 && data[0] == UTF16_BOM_LE[0] && data[1] == UTF16_BOM_LE[1]) {
-		return encoding::utf16_le;
-	}
-	else if(m_fileSize >= 2 && data[0] == UTF16_BOM_BE[0] && data[1] == UTF16_BOM_BE[1]) {
-		return encoding::utf16_be;
-	}
-	else if(m_fileSize >= 3 && data[0] == UTF8_BOM[0] && data[1] == UTF8_BOM[1] && data[2] == UTF8_BOM[2]) {
-		return encoding::utf8;
-	}
-	else {
-		return encoding::none;
-	}
-}
-
-size_t file_holder::get_bom_length() const
-{
-	switch(m_encoding) {
-	case encoding::utf8:
-		return 3;
-		break;
-	case encoding::utf16_le:
-	case encoding::utf16_be:
-		return 2;
-		break;
-	}
-	return 0;
+	return m_encoding;
 }
 
 const uint8_t* file_holder::data() const
 {
-	return m_lpBaseAddress + get_bom_length();
+	return m_lpBaseAddress;
 }
 
-const size_t file_holder::data_length() const
+const size_t file_holder::data_size() const
 {
-	return m_fileSize - get_bom_length();
+	return m_fileSize;
 }
 
 } // end of namespace logan

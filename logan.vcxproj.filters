@@ -31,11 +31,20 @@
     <Filter Include="Parsers\Asw">
       <UniqueIdentifier>{cc854857-d558-4092-b727-894d0a5e98ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Convert">
-      <UniqueIdentifier>{4ccdaaee-c06a-4f94-b601-f5ca0b2c9fcb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ShareData">
       <UniqueIdentifier>{285a94be-5a21-495d-8861-ec58578447e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="zlib">
+      <UniqueIdentifier>{1fa9bdc3-4a11-4872-90d8-b1bcd8d96499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archive">
+      <UniqueIdentifier>{5dc2d4ab-4279-416a-9a63-67f8255613a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{4ccdaaee-c06a-4f94-b601-f5ca0b2c9fcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{f1189fb6-2701-40a7-9a03-a90aa58eb3ea}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -59,9 +68,6 @@
     <ClInclude Include="analyzer.h">
       <Filter>Parsers\Asw</Filter>
     </ClInclude>
-    <ClInclude Include="analyzer_intf.h">
-      <Filter>Parsers\Asw</Filter>
-    </ClInclude>
     <ClInclude Include="log_line.h">
       <Filter>Parsers\Asw</Filter>
     </ClInclude>
@@ -69,13 +75,58 @@
       <Filter>Parsers</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
-      <Filter>Convert</Filter>
+      <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="share_data.h">
       <Filter>ShareData</Filter>
     </ClInclude>
     <ClInclude Include="share_data_holder.h">
       <Filter>ShareData</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\crc32.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\deflate.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\gzguts.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inffast.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inffixed.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inflate.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inftrees.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\trees.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zconf.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zlib.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zutil.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="archive_gz.h">
+      <Filter>Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="scope_guard.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="bom.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="data.h">
+      <Filter>Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +151,57 @@
     </ClCompile>
     <ClCompile Include="log_line.cpp">
       <Filter>Parsers\Asw</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\adler32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\compress.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\crc32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\deflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\gzclose.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\gzlib.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\gzread.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\gzwrite.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\infback.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inffast.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inftrees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\trees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\uncompr.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\zutil.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="archive_gz.cpp">
+      <Filter>Archive</Filter>
+    </ClCompile>
+    <ClCompile Include="data.cpp">
+      <Filter>Data</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

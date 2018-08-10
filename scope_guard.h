@@ -2,6 +2,8 @@
 
 #include <functional>
 
+namespace logan {
+
 class scope_guard {
 public:
 	template<class Callable>
@@ -25,3 +27,5 @@ public:
 private:
 	std::function<void()> f;
 };
+
+} // end of namespace logan

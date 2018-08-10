@@ -1,108 +1,112 @@
 #include "stdafx.h"
 #include "config_loader.h"
 #include "utils.h"
+#include "rapidjson/filereadstream.h"
+
+using namespace rapidjson;
 
 namespace logan {
 
-bool config_loader::load(const wchar_t* file_path)
+config_loader::config_loader(logger_ptr logger)
+	: logger_holder(logger)
 {
-	std::ifstream ifs(file_path);
-	m_cfg = json::parse(ifs);
-	if(m_cfg.is_object() && m_cfg.find("parsers") != m_cfg.end()) {
-		return true;
-	}
-	return false;
 }
 
-parsers config_loader::parsers_from_name(const std::string& name)
+bool config_loader::load(const wchar_t* file_path)
 {
-	if(name.compare("asw") == 0) {
+	FILE* file = nullptr;
+	errno_t err = _wfopen_s(&file, file_path, L"rb");
+	if(err != 0) {
+		logger()->error("Cannot open file '{}':{}", to_utf8(file_path), err);
+		return false;
+	}
+	scope_guard fg = [&]() {
+		fclose(file);
+	};
+
+	char read_buffer[65536];
+	FileReadStream is(file, read_buffer, sizeof(read_buffer));
+	
+	if(m_cfg.ParseStream(is).HasParseError()) {
+		logger()->error("Parse json file '{}' failed, {}:{}.", to_utf8(file_path), (int32_t)m_cfg.GetParseError(), m_cfg.GetErrorOffset());
+		return false;
+	}
+
+	if(!m_cfg.IsObject() || !m_cfg.HasMember("parsers")) {
+		return false;
+	}
+
+	return true;
+}
+
+parsers config_loader::parsers_from_name(const char* str)
+{
+	if(strcmp("asw", str) == 0) {
 		return parsers::asw;
 	}
-	else if(name.compare("asw-short-date") == 0) {
+	else if(strcmp("asw-short-date", str) == 0) {
 		return parsers::asw_short_date;
 	}
 	return parsers::unknown;
 }
 
-std::string config_loader::parsers_to_name(parsers parser)
-{
-	switch(parser) {
-	case logan::parsers::asw:
-		return std::string("asw");
-		break;
-	case logan::parsers::asw_short_date:
-		return std::string("asw-short-date");
-		break;
-	}
-
-	return std::string();
-}
+// std::string config_loader::parsers_to_name(parsers parser)
+// {
+// 	switch(parser) {
+// 	case logan::parsers::asw:
+// 		return std::string("asw");
+// 		break;
+// 	case logan::parsers::asw_short_date:
+// 		return std::string("asw-short-date");
+// 		break;
+// 	}
+// 
+// 	return std::string();
+// }
 
 parsers config_loader::get_parser(const wchar_t* file_name)
 {
-	parsers def_parser = parsers::unknown;
-	auto jparsers = m_cfg["parsers"];
-	for(auto it = jparsers.cbegin(); it != jparsers.cend(); ++it) {
+	std::string fine_name_a = to_utf8(file_name);
 
-		if(it.value().find("file-filter") == it.value().end()) {
+	parsers def_parser = parsers::unknown;
+	const auto& jparsers = m_cfg["parsers"];
+	for(const auto& it: jparsers.GetObject()) {
+
+		const auto& it_val = it.value;
+
+		if(!it_val.HasMember("file-filter")) {
 			continue;
 		}
-
-		if(it.value().find("default") != it.value().end()) {
-			def_parser = it.value().value("default", false) ? parsers_from_name(it.key()) : def_parser;
+		enum_parser<parsers> ep;
+		if(it_val.HasMember("default") && it_val["default"].IsBool()) {
+			def_parser = it_val["default"].GetBool() ? ep.toEnum(it.name.GetString()) : def_parser;
 		}
 
-		auto filters = it.value()["file-filter"];
-		for(auto itFilter = filters.cbegin(); itFilter != filters.cend(); ++itFilter) {
+		const auto& filters = it_val["file-filter"];
+		for(const auto& it_filter: filters.GetArray()) {
 
-			auto compare_no_case = [&](std::string& a, std::string& b) {
-				return std::equal(a.begin(), a.end(), b.begin(), b.end(), [](char a, char b) {
-					return tolower(a) == tolower(b);
-				});
-			};
-
-			std::string a = to_utf8(file_name);
-			std::string b = itFilter.value().get<std::string>();
-
-			if(wildchar_compare(b.c_str(), a.c_str())) {
-				return parsers_from_name(it.key());
+			if(wildchar_compare(it_filter.GetString(), fine_name_a.c_str())) {
+				return ep.toEnum(it.name.GetString());
 			}
 		}
 	}
 	return def_parser;
 }
 
-bool config_loader::only_new_time(parsers parser)
+bool config_loader::trim_msg_whitespaces(parsers parser)
 {
-	auto jparsers = m_cfg["parsers"];
-	for(auto it = jparsers.cbegin(); it != jparsers.cend(); ++it) {
-
-		if(parsers_to_name(parser).compare(it.key()) == 0) {
-			if(it.value().find("only-new-time") != it.value().end()) {
-				return it.value().value("only-new-time", false);
-			}
+	//trim-msg-whitespaces
+	enum_parser<parsers> ep;
+	auto sparser = ep.fromEnum(parser);
+	const auto& jparsers = m_cfg["parsers"];
+	if(jparsers.HasMember(sparser.c_str())) {
+		const auto& jpar = jparsers[sparser.c_str()];
+		if(jpar.HasMember("trim-msg-whitespaces") && jpar["trim-msg-whitespaces"].IsBool()) {
+			return jpar["trim-msg-whitespaces"].GetBool();
 		}
+		return false;
 	}
 	return false;
 }
-
-//////////////////////////////////////////////////////////////////////////
-/*
-auto reports = report["reports"];
-for(auto it = reports.cbegin(); it != reports.cend(); ++it) {
-
-	data_item item;
-	item.count = it.value()["count"].get<uint32_t>();
-	item.skipped = 0;
-
-	ULONGLONG ftLong = it.value()["last_time"].get<ULONGLONG>();
-	item.last_time.dwLowDateTime = (DWORD)(ftLong & 0xFFFFFFFF);
-	item.last_time.dwHighDateTime = (DWORD)(ftLong >> 32);
-
-	m_analyzed_data.items.emplace(it.value()["text"].get<std::string>(), item);
-}
-*/
-//////////////////////////////////////////////////////////////////////////
 
 } // end of namespace logan
